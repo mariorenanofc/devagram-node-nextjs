@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "md5": "^2.3.0",
     "moment": "^2.29.4",
     "mongoose": "^7.5.1",
     "next": "^13.4.19",
