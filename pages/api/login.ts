@@ -1,15 +1,21 @@
 import type {NextApiRequest, NextApiResponse} from 'next';
 import {conectMongoDB} from '../../middleware/conectMongoDB';
-import  {RespostaPadraoMsg} from '../../types/respostaPadraoMsg'
+import  {RespostaPadraoMsg} from '../../types/respostaPadraoMsg';
+import md5 from 'md5';
+import { UsuarioModel } from '@/models/UsuarioModel';
 
-const endpointLogin = (
+const endpointLogin = async (
     req: NextApiRequest,
     res: NextApiResponse<RespostaPadraoMsg>
 ) => {
     if(req.method === 'POST'){
+
         const {login, senha} = req.body;
-        if(login === 'admin@admin123' && senha === 'pass123@pass') {
-            return res. status(200).json({msg: 'Usuario autênticado com sucesso'})
+
+        const usuariosEncontrados = await UsuarioModel.find({email: login, senha: md5(senha)});
+        if(usuariosEncontrados && usuariosEncontrados.length > 0) {
+            const usuarioEncontrado = usuariosEncontrados[0];            
+            return res. status(200).json({msg: `Usuario ${usuarioEncontrado.nome} autênticado com sucesso`})
         }
         return res.status(401).json({erro: 'Senha  ou usuario inválido!'})
     }
